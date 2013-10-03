@@ -26,7 +26,7 @@ Tags: js,javascript,php
 ```
 
 You can now access both the current page `meta.tags` and each `page.tags` in the `pages` array:
-```
+```html
 {% if is_front_page %}
 <!-- front page -->
     {% for page in pages %}
