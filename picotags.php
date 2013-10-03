@@ -14,11 +14,6 @@ class Picotags {
     public $is_tag;
     public $current_tag;
 
-    public function plugins_loaded()
-    {
-
-    }
-
     public function request_url(&$url)
     {
         // Set is_tag to true if the first four characters of the URL are 'tag/'
@@ -30,31 +25,6 @@ class Picotags {
         }
         // If the URL does start with 'tag/', grab the rest of the URL
         if ($this->is_tag) $this->current_tag = substr($url, 4);
-    }
-
-    public function before_load_content(&$file)
-    {
-
-    }
-
-    public function after_load_content(&$file, &$content)
-    {
-
-    }
-
-    public function before_404_load_content(&$file)
-    {
-
-    }
-
-    public function after_404_load_content(&$file, &$content)
-    {
-
-    }
-
-    public function config_loaded(&$settings)
-    {
-
     }
 
     public function before_read_file_meta(&$headers)
@@ -69,11 +39,6 @@ class Picotags {
         if (isset($meta['tags']) && !is_array($meta['tags']) && $meta['tags'] !== '') {
             $meta['tags'] = split(',', $meta['tags']);
         }
-    }
-
-    public function content_parsed(&$content)
-    {
-
     }
 
     public function get_page_data(&$data, $page_meta)
@@ -112,11 +77,6 @@ class Picotags {
         }
     }
 
-    public function before_twig_register()
-    {
-
-    }
-
     public function before_render(&$twig_vars, &$twig)
     {
         if ($this->is_tag) {
@@ -129,11 +89,6 @@ class Picotags {
             $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
 
         }
-    }
-
-    public function after_render(&$output)
-    {
-
     }
 
 }
