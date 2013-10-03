@@ -37,14 +37,14 @@ class Picotags {
     {
         // Parses meta.tags to ensure it is an array
         if (isset($meta['tags']) && !is_array($meta['tags']) && $meta['tags'] !== '') {
-            $meta['tags'] = split(',', $meta['tags']);
+            $meta['tags'] = explode(',', $meta['tags']);
         }
     }
 
     public function get_page_data(&$data, $page_meta)
     {
         // Adds tags to page in pages
-        $data['tags'] = split(',', $page_meta['tags']);
+        $data['tags'] = explode(',', $page_meta['tags']);
     }
 
     public function get_pages(&$pages, &$current_page, &$prev_page, &$next_page)
