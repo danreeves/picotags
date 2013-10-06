@@ -43,8 +43,11 @@ class Picotags {
 
     public function get_page_data(&$data, $page_meta)
     {
-        // Adds tags to page in pages
-        $data['tags'] = explode(',', $page_meta['tags']);
+        // If tags in page_meta isn't empty
+        if ($page_meta['tags'] != '') {
+            // Add tags to page in pages
+            $data['tags'] = explode(',', $page_meta['tags']);
+        }
     }
 
     public function get_pages(&$pages, &$current_page, &$prev_page, &$next_page)
