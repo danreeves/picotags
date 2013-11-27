@@ -6,8 +6,8 @@
  * Adds page tagging functionality to Pico.
  *
  * @author Dan Reeves
- * @link https://github.com/HeyDanReeves/picotags/
- * @license http://opensource.org/licenses/MIT
+ * @link https://github.com/DanReeves/picotags/
+ * @license http://danreeves.mit-license.org/
  */
 class Picotags {
 
