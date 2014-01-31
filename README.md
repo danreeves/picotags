@@ -96,5 +96,4 @@ You can now access both the current page `meta.tags` and each `page.tags` in the
 <!-- single page -->
 {% endif %}
 ```
-##Demo
-Coming soon
+
