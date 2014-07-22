@@ -60,7 +60,7 @@ class Picotags {
             // Loop through the pages
             foreach ($pages as $page) {
                 // If the page has tags
-                if ($page['tags']) {
+                if (is_array($page['tags'])) {
                     // Loop through the tags
                     foreach ($page['tags'] as $tag) {
                         // And add them to the tag_list array
