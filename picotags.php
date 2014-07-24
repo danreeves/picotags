@@ -56,7 +56,7 @@ class Picotags {
             // Loop through the pages
             foreach ($pages as $page) {
                 // If the page has tags
-                if ($page['tags']) {
+                if ($page['tags'] and $page['template'] != 'category') {
                     if (!is_array($page['tags'])) {
                         $page['tags'] = explode(',', $page['tags']);
                     }
@@ -106,7 +106,7 @@ class Picotags {
             $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
             /* For a tag list alphabetically sorted */
             $twig_vars['tag_list_sorted'] = $this->tag_list_sorted; /* {{ tag_list }} in an array*/
-            
+
             /* 
                 MULTICOLUMNS OUTPUT
                 Change the value of $nbcol.
