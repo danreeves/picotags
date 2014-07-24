@@ -102,7 +102,17 @@ class Picotags {
             // Return current tag and list of all tags as Twig vars
             $twig_vars['current_tag'] = $this->current_tag; /* {{ current_tag }} is a string*/
             $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
-
+            
+            /* Multicolumns output */
+            $nbcol = 5;
+            $nbtags = sizeof($this->tag_list);
+            $nbtagscol = ceil ($nbtags/$nbcol);
+            $tag_list_cut = array();
+            for ($i=0;$i<$nbcol;$i++)
+            {
+                $this->tag_list_cut = array_slice($this->tag_list, $i*$nbtagscol, $nbtagscol);
+                $twig_vars['tag_list_'.$i] = $this->tag_list_cut;
+            }
         }
     }
 
