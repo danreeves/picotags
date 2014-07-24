@@ -106,6 +106,34 @@ class Picotags {
             $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
             /* For a tag list alphabetically sorted */
             $twig_vars['tag_list_sorted'] = $this->tag_list_sorted; /* {{ tag_list }} in an array*/
+            
+            /* 
+                MULTICOLUMNS OUTPUT
+                Change the value of $nbcol.
+                In your template, for a two columns output : 
+                <ul>
+                    {% for tag in tag_list_0 %} OR {% for tag in tag_list_sorted_0 %}
+                        <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+                    {% endfor %}
+                </ul>
+                <ul>
+                    {% for tag in tag_list_1 %} OR {% for tag in tag_list_sorted_1 %}
+                        <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+                    {% endfor %}
+                </ul>
+            */
+            $nbcol = 5;
+            $nbtags = sizeof($this->tag_list);
+            $nbtagscol = ceil ($nbtags/$nbcol);
+            $tag_list_cut = array();
+            $tag_list_sorted_cut = array();
+            for ($i=0;$i<$nbcol;$i++)
+            {
+                $this->tag_list_cut = array_slice($this->tag_list, $i*$nbtagscol, $nbtagscol);
+                $twig_vars['tag_list_'.$i] = $this->tag_list_cut;
+                $this->tag_list_sorted_cut = array_slice($this->tag_list, $i*$nbtagscol, $nbtagscol);
+                $twig_vars['tag_list_sorted_'.$i] = $this->tag_list_sorted_cut;
+            }
         }
     }
 
