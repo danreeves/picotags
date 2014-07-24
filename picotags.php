@@ -103,7 +103,21 @@ class Picotags {
             $twig_vars['current_tag'] = $this->current_tag; /* {{ current_tag }} is a string*/
             $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
             
-            /* Multicolumns output */
+            /* 
+                MULTICOLUMNS OUTPUT
+                Change the value of $nbcol.
+                In your template, for a two columns output : 
+                <ul>
+                    {% for tag in tag_list_0 %}
+                        <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+                    {% endfor %}
+                </ul>
+                <ul>
+                    {% for tag in tag_list_1 %}
+                        <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+                    {% endfor %}
+                </ul>
+            */
             $nbcol = 5;
             $nbtags = sizeof($this->tag_list);
             $nbtagscol = ceil ($nbtags/$nbcol);
