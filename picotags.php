@@ -71,6 +71,11 @@ class Picotags {
                     }
                 }
             }
+            /* Sort alphabetically, case insensitive */
+            natcasesort($tag_list);
+            foreach ($tag_list as $key => $value) {
+                $tag_list[] = $value;
+            }
             // Add the tag list to the class scope, taking out duplicate or empty values
             $this->tag_list = array_unique(array_filter($tag_list));
             // Overwrite $pages with $new_pages
