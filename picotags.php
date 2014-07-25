@@ -64,7 +64,6 @@ class Picotags {
             // Init $new_pages and $tag_list arrays
             $new_pages = array();
             $tag_list = array();
-            $tag_list_sorted = array();
             // Loop through the pages
             foreach ($pages as $page) {
                 // If the page has tags
