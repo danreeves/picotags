@@ -45,6 +45,11 @@ class Picotags {
         // Parses meta.tags to ensure it is an array
         if (isset($meta['tags']) && !is_array($meta['tags']) && $meta['tags'] !== '') {
             $meta['tags'] = explode(',', $meta['tags']);
+            /* Sort alphabetically the tags for articles/blog posts */
+            if (isset($this->ptags_sort) and $this->ptags_sort === true)
+            {
+                natcasesort($meta['tags']);
+            }
         }
     }
 
@@ -53,7 +58,12 @@ class Picotags {
         // If tags in page_meta isn't empty
         if ($page_meta['tags'] != '') {
             // Add tags to page in pages
-            $data['tags'] = explode(',', $page_meta['tags']);
+        	$data['tags'] = explode(',', $page_meta['tags']);
+            /* Sort alphabetically the tags for tag pages */
+        	if (isset($this->ptags_sort) and $this->ptags_sort === true)
+        	{
+        		natcasesort($data['tags']);
+        	}
         }
     }
 
@@ -87,7 +97,8 @@ class Picotags {
                 Sort alphabetically, case insensitive
                 Change the value to $config['ptags_sort'] = true; in the config.php
             */
-            if (isset($this->ptags_sort) and $this->ptags_sort === true) {
+            if (isset($this->ptags_sort) and $this->ptags_sort === true)
+            {
                 natcasesort($tag_list);
                 foreach ($tag_list as $key => $value) {
                     $tag_list[] = $value;
