@@ -14,6 +14,18 @@ class Picotags {
     public $is_tag;
     public $current_tag;
 
+    public function config_loaded(&$settings) {
+
+        if (isset($settings['ptags_nbcol']))
+        {
+            $this->ptags_nbcol = $settings['ptags_nbcol'];
+        }
+        if (isset($settings['ptags_sort']))
+        {
+            $this->ptags_sort = $settings['ptags_sort'];
+        }
+    }
+
     public function request_url(&$url)
     {
         // Set is_tag to true if the first four characters of the URL are 'tag/'
@@ -72,14 +84,18 @@ class Picotags {
                     }
                 }
             }
-            /* Sort alphabetically, case insensitive */
-            natcasesort($tag_list);
-            foreach ($tag_list as $key => $value) {
-                $tag_list_sorted[] = $value;
+            /* 
+                Sort alphabetically, case insensitive
+                Change the value to $config['ptags_sort'] = true; in the config.php
+            */
+            if (isset($this->ptags_sort) and $this->ptags_sort === true) {
+                natcasesort($tag_list);
+                foreach ($tag_list as $key => $value) {
+                    $tag_list[] = $value;
+                }
             }
             // Add the tag list to the class scope, taking out duplicate or empty values
             $this->tag_list = array_unique(array_filter($tag_list));
-            $this->tag_list_sorted = array_unique(array_filter($tag_list_sorted));
             // Overwrite $pages with $new_pages
             $pages = $new_pages;
         } else { // Workaround
@@ -103,37 +119,35 @@ class Picotags {
             $twig_vars['meta']['title'] = "#" . $this->current_tag;
             // Return current tag and list of all tags as Twig vars
             $twig_vars['current_tag'] = $this->current_tag; /* {{ current_tag }} is a string*/
-            $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
-            /* For a tag list alphabetically sorted */
-            $twig_vars['tag_list_sorted'] = $this->tag_list_sorted; /* {{ tag_list }} in an array*/
-
             /* 
                 MULTICOLUMNS OUTPUT
-                Change the value of $nbcol.
+                Change the value of $config['ptags_nbcol'] = 5; in the config.php
                 In your template, for a two columns output : 
                 <ul>
-                    {% for tag in tag_list_0 %} OR {% for tag in tag_list_sorted_0 %}
+                    {% for tag in tag_list_0 %}
                         <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
                     {% endfor %}
                 </ul>
                 <ul>
-                    {% for tag in tag_list_1 %} OR {% for tag in tag_list_sorted_1 %}
+                    {% for tag in tag_list_1 %}
                         <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
                     {% endfor %}
                 </ul>
             */
-            $nbcol = 5;
-            $nbtags = sizeof($this->tag_list);
-            $nbtagscol = ceil ($nbtags/$nbcol);
-            $tag_list_cut = array();
-            $tag_list_sorted_cut = array();
-            for ($i=0;$i<$nbcol;$i++)
-            {
-                $this->tag_list_cut = array_slice($this->tag_list, $i*$nbtagscol, $nbtagscol);
-                $twig_vars['tag_list_'.$i] = $this->tag_list_cut;
-                $this->tag_list_sorted_cut = array_slice($this->tag_list, $i*$nbtagscol, $nbtagscol);
-                $twig_vars['tag_list_sorted_'.$i] = $this->tag_list_sorted_cut;
+            if (isset($this->ptags_nbcol)) {
+                $nbtags = sizeof($this->tag_list);
+                $nbtagscol = ceil ($nbtags/$this->ptags_nbcol);
+                $tag_list_cut = array();
+                $tag_list_sorted_cut = array();
+                for ($i=0;$i<$this->ptags_nbcol;$i++)
+                {
+                    $this->tag_list_cut = array_slice($this->tag_list, $i*$nbtagscol, $nbtagscol);
+                    $twig_vars['tag_list_'.$i] = $this->tag_list_cut;
+                }
             }
+            else {
+                $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
+            } 
         }
     }
 
