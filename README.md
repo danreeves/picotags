@@ -99,8 +99,12 @@ You can now access both the current page `meta.tags` and each `page.tags` in the
 
 ## Multicolumn output
 
-Change the value of $nbcol, e.g 2.
-In your template, for a two columns output : 
+For a two columns output :
+- in your config.php :
+```
+$config['ptags_nbcol'] = 5;
+```
+- in your template output : 
 ```
 <ul>
     {% for tag in tag_list_0 %}
@@ -116,4 +120,7 @@ In your template, for a two columns output :
 
 ## Alphabetically sorted list
 
-You can also use the `tag_list_sorted` for an alphabetical list, or `tag_list_sorted_N` for multicolumn sorted lists. 
+In your config.php :
+```
+$config['ptags_sort'] = true;
+```
