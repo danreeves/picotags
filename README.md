@@ -97,3 +97,23 @@ You can now access both the current page `meta.tags` and each `page.tags` in the
 {% endif %}
 ```
 
+## Multicolumn output
+
+Change the value of $nbcol, e.g 2.
+In your template, for a two columns output : 
+```
+<ul>
+    {% for tag in tag_list_0 %}
+        <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+    {% endfor %}
+</ul>
+<ul>
+    {% for tag in tag_list_1 %}
+        <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+    {% endfor %}
+</ul>
+```
+
+## Alphabetically sorted list
+
+You can also use the `tag_list_sorted` for an alphabetical list, or `tag_list_sorted_N` for multicolumn sorted lists. 
