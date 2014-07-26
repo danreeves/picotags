@@ -58,12 +58,15 @@ class Picotags {
         // If tags in page_meta isn't empty
         if ($page_meta['tags'] != '') {
             // Add tags to page in pages
-        	$data['tags'] = explode(',', $page_meta['tags']);
-            /* Sort alphabetically the tags for tag pages */
-        	if (isset($this->ptags_sort) and $this->ptags_sort === true)
-        	{
-        		natcasesort($data['tags']);
-        	}
+            $data['tags'] = explode(',', $page_meta['tags']);
+            /* 
+                Sort alphabetically the tags for tag pages
+                (works on my local WampServer2.5)
+            */
+            if (isset($this->ptags_sort) and $this->ptags_sort === true)
+            {
+                natcasesort($data['tags']);
+            }
         }
     }
 
@@ -80,6 +83,14 @@ class Picotags {
                 if ($page['tags'] and $page['template'] != 'category') {
                     if (!is_array($page['tags'])) {
                         $page['tags'] = explode(',', $page['tags']);
+                        /* 
+                            Sort alphabetically the tags for tag pages
+                            (works on my OVH server)
+                        */
+                        if (isset($this->ptags_sort) and $this->ptags_sort === true)
+                        {
+                            natcasesort($page['tags']);
+                        }
                     }
                     // Loop through the tags
                     foreach ($page['tags'] as $tag) {
@@ -160,5 +171,5 @@ class Picotags {
             } 
         }
     }
-
 }
+?>
