@@ -97,7 +97,7 @@ You can now access both the current page `meta.tags` and each `page.tags` in the
 {% endif %}
 ```
 
-## Adding meta keywords to <head>
+## Adding meta keywords to \<head\>
 ```
 {% if meta.tags %}
     <meta name="keywords" content="{{ meta.keywords }}">
