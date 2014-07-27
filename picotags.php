@@ -24,6 +24,10 @@ class Picotags {
         {
             $this->ptags_sort = $settings['ptags_sort'];
         }
+        if (isset($settings['ptags_delunique']))
+        {
+            $this->ptags_delunique = $settings['ptags_delunique'];
+        }
     }
 
     public function request_url(&$url)
@@ -103,6 +107,21 @@ class Picotags {
                             // Add that page to the new_pages
                             $new_pages[] = $page;
                         }
+                    }
+                }
+            }
+            /* 
+                Removing from the tags list the tags with only one reference
+                Change the value to $config['ptags_delunique'] = true; in the config.php
+            */
+            if (isset($this->ptags_delunique) and $this->ptags_delunique === true)
+            {
+                foreach(array_count_values($tag_list) as $val => $occ)
+                {
+                    if($occ == 1)
+                    {
+                        $key = array_search($val, $tag_list);
+                        unset($tag_list[$key]);
                     }
                 }
             }
