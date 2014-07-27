@@ -112,13 +112,21 @@ class Picotags {
             */
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
-                natcasesort($tag_list);
-                foreach ($tag_list as $key => $value) {
+                
+                $tag_list_sorted = array();
+                $tag_list_sorted = $tag_list;
+                $tag_list = array();
+                natcasesort($tag_list_sorted);
+                foreach ($tag_list_sorted as $key => $value) {
                     $tag_list[] = $value;
                 }
+                // Add the tag list to the class scope, taking out duplicate or empty values
+                $this->tag_list = array_unique(array_filter($tag_list));
             }
-            // Add the tag list to the class scope, taking out duplicate or empty values
-            $this->tag_list = array_unique(array_filter($tag_list));
+            else {
+                // Add the tag list to the class scope, taking out duplicate or empty values
+                $this->tag_list = array_unique(array_filter($tag_list));
+            }
             // Overwrite $pages with $new_pages
             $pages = $new_pages;
         } else { // Workaround
