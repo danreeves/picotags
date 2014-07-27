@@ -96,12 +96,11 @@ You can now access both the current page `meta.tags` and each `page.tags` in the
 <!-- single page -->
 {% endif %}
 ```
+## Alphabetically sorted list
 
-## Adding meta keywords to \<head\>
+In your config.php :
 ```
-{% if meta.tags %}
-    <meta name="keywords" content="{{ meta.keywords }}">
-{% endif %}
+$config['ptags_sort'] = true;
 ```
 
 ## Multicolumn output
@@ -124,10 +123,15 @@ $config['ptags_nbcol'] = 5;
     {% endfor %}
 </ul>
 ```
+## Adding meta keywords to \<head\>
+```
+{% if meta.tags %}
+    <meta name="keywords" content="{{ meta.keywords }}">
+{% endif %}
+```
 
-## Alphabetically sorted list
-
+## Removing from the tags list the ones that are used in only one page
 In your config.php :
 ```
-$config['ptags_sort'] = true;
+$config['ptags_delunique'] = true;
 ```
