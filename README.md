@@ -108,7 +108,7 @@ $config['ptags_sort'] = true;
 For a two columns output :
 - in your config.php :
 ```
-$config['ptags_nbcol'] = 5;
+$config['ptags_nbcol'] = 2;
 ```
 - in your template output : 
 ```
