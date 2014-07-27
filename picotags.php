@@ -24,6 +24,10 @@ class Picotags {
         {
             $this->ptags_sort = $settings['ptags_sort'];
         }
+        if (isset($settings['ptags_delunique']))
+        {
+            $this->ptags_delunique = $settings['ptags_delunique'];
+        }
     }
 
     public function request_url(&$url)
@@ -44,7 +48,14 @@ class Picotags {
     {
         // Parses meta.tags to ensure it is an array
         if (isset($meta['tags']) && !is_array($meta['tags']) && $meta['tags'] !== '') {
+            /* Keeping the tags list for populating meta keywords */
+            $this->htmlmeta['tags'] = $meta['tags'];         
             $meta['tags'] = explode(',', $meta['tags']);
+            /* Sort alphabetically the tags for articles/blog posts */
+            if (isset($this->ptags_sort) and $this->ptags_sort === true)
+            {
+                natcasesort($meta['tags']);
+            }
         }
     }
 
@@ -54,6 +65,14 @@ class Picotags {
         if ($page_meta['tags'] != '') {
             // Add tags to page in pages
             $data['tags'] = explode(',', $page_meta['tags']);
+            /* 
+                Sort alphabetically the tags for tag pages
+                (works on my local WampServer2.5)
+            */
+            if (isset($this->ptags_sort) and $this->ptags_sort === true)
+            {
+                natcasesort($data['tags']);
+            }
         }
     }
 
@@ -64,13 +83,20 @@ class Picotags {
             // Init $new_pages and $tag_list arrays
             $new_pages = array();
             $tag_list = array();
-            $tag_list_sorted = array();
             // Loop through the pages
             foreach ($pages as $page) {
                 // If the page has tags
                 if ($page['tags'] and $page['template'] != 'category') {
                     if (!is_array($page['tags'])) {
                         $page['tags'] = explode(',', $page['tags']);
+                        /* 
+                            Sort alphabetically the tags for tag pages
+                            (works on my OVH server)
+                        */
+                        if (isset($this->ptags_sort) and $this->ptags_sort === true)
+                        {
+                            natcasesort($page['tags']);
+                        }
                     }
                     // Loop through the tags
                     foreach ($page['tags'] as $tag) {
@@ -85,17 +111,41 @@ class Picotags {
                 }
             }
             /* 
+                Removing from the tags list the tags with only one reference
+                Change the value to $config['ptags_delunique'] = true; in the config.php
+            */
+            if (isset($this->ptags_delunique) and $this->ptags_delunique === true)
+            {
+                foreach(array_count_values($tag_list) as $val => $occ)
+                {
+                    if($occ == 1)
+                    {
+                        $key = array_search($val, $tag_list);
+                        unset($tag_list[$key]);
+                    }
+                }
+            }
+            /* 
                 Sort alphabetically, case insensitive
                 Change the value to $config['ptags_sort'] = true; in the config.php
             */
-            if (isset($this->ptags_sort) and $this->ptags_sort === true) {
-                natcasesort($tag_list);
-                foreach ($tag_list as $key => $value) {
+            if (isset($this->ptags_sort) and $this->ptags_sort === true)
+            {
+                
+                $tag_list_sorted = array();
+                $tag_list_sorted = $tag_list;
+                $tag_list = array();
+                natcasesort($tag_list_sorted);
+                foreach ($tag_list_sorted as $key => $value) {
                     $tag_list[] = $value;
                 }
+                // Add the tag list to the class scope, taking out duplicate or empty values
+                $this->tag_list = array_unique(array_filter($tag_list));
             }
-            // Add the tag list to the class scope, taking out duplicate or empty values
-            $this->tag_list = array_unique(array_filter($tag_list));
+            else {
+                // Add the tag list to the class scope, taking out duplicate or empty values
+                $this->tag_list = array_unique(array_filter($tag_list));
+            }
             // Overwrite $pages with $new_pages
             $pages = $new_pages;
         } else { // Workaround
@@ -149,6 +199,19 @@ class Picotags {
                 $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
             } 
         }
+        /*
+            For other pages, add keywords to the meta information ; for example, in the head of your template index.html :
+            {% if meta.tags %}
+                <meta name="keywords" content="{{ meta.keywords }}">
+            {% endif %}
+        */
+        else
+        {
+            if (isset($this->htmlmeta['tags']))
+            {
+                $twig_vars['meta']['keywords'] = $this->htmlmeta['tags'];
+            }
+        }
     }
-
 }
+?>
