@@ -126,7 +126,7 @@ $config['ptags_nbcol'] = 2;
 ## Adding meta keywords to \<head\>
 ```
 {% if meta.tags %}
-    <meta name="keywords" content="{{ meta.keywords }}">
+    <meta name="keywords" content="{{ meta.tags | join(',') }}">
 {% endif %}
 ```
 

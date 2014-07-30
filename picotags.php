@@ -48,8 +48,6 @@ class Picotags {
     {
         // Parses meta.tags to ensure it is an array
         if (isset($meta['tags']) && !is_array($meta['tags']) && $meta['tags'] !== '') {
-            /* Keeping the tags list for populating meta keywords */
-            $this->htmlmeta['tags'] = $meta['tags'];         
             $meta['tags'] = explode(',', $meta['tags']);
             /* Sort alphabetically the tags for articles/blog posts */
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
@@ -198,19 +196,6 @@ class Picotags {
             else {
                 $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
             } 
-        }
-        /*
-            For other pages, add keywords to the meta information ; for example, in the head of your template index.html :
-            {% if meta.tags %}
-                <meta name="keywords" content="{{ meta.keywords }}">
-            {% endif %}
-        */
-        else
-        {
-            if (isset($this->htmlmeta['tags']))
-            {
-                $twig_vars['meta']['keywords'] = $this->htmlmeta['tags'];
-            }
         }
     }
 }
