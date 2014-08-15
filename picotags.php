@@ -84,7 +84,7 @@ class Picotags {
             // Loop through the pages
             foreach ($pages as $page) {
                 // If the page has tags
-                if ($page['tags'] and $page['template'] != 'category') {
+                if ($page['tags']) {
                     if (!is_array($page['tags'])) {
                         $page['tags'] = explode(',', $page['tags']);
                         /* 
