@@ -28,6 +28,22 @@ class Picotags {
         {
             $this->ptags_delunique = $settings['ptags_delunique'];
         }
+        if (isset($settings['ptags_exclude']))
+        {
+            $this->ptags_exclude = $settings['ptags_exclude'];
+            // Creating an inverted array (value = key ie. blabla = title)
+            // for later comparison with parsed pages meta array
+            foreach ($this->ptags_exclude as $metakey => $metavalue)
+            {
+                // Keeping an array with meta keys to check in pages
+                $this->exclude_keys[] = $metakey;
+                $metavalue = explode('|', $metavalue);
+                foreach ($metavalue as $key => $value)
+                {
+                    $this->metaexclude[$value] = $metakey;
+                }
+            }
+        }
     }
 
     public function request_url(&$url)
@@ -74,6 +90,27 @@ class Picotags {
         }
     }
 
+    public function exclude_from_tag_list(&$lapage)
+    {
+        $lapagemeta = array();
+        // For every meta key (title, template...) of the ptags_exclude
+        // get the value for the parsed page
+        foreach ($this->exclude_keys as $key => $value) {
+            $lapagemeta[$value] = $lapage[$value];
+        }
+        // Flipping array to compare with the excluded meta values
+        $lapagemeta = array_flip(array_filter($lapagemeta));
+        $this->diff = array_filter(array_intersect_assoc($lapagemeta, $this->metaexclude));
+        if (empty($this->diff)) {
+            // if empty, we keep the page for the tag_list actions
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     public function get_pages(&$pages, &$current_page, &$prev_page, &$next_page)
     {
         // If the URL starts with 'tag/' do this different logic
@@ -83,8 +120,8 @@ class Picotags {
             $tag_list = array();
             // Loop through the pages
             foreach ($pages as $page) {
-                // If the page has tags
-                if ($page['tags']) {
+                // If the page has tags and if the page is not in the exclude meta list
+                if ($page['tags'] and $this->exclude_from_tag_list($page) == false) {
                     if (!is_array($page['tags'])) {
                         $page['tags'] = explode(',', $page['tags']);
                         /* 
