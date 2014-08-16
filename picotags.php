@@ -102,7 +102,7 @@ class Picotags {
         $lapagemeta = array_flip(array_filter($lapagemeta));
         $this->diff = array_filter(array_intersect_assoc($lapagemeta, $this->metaexclude));
         if (empty($this->diff)) {
-            // if empty, we keep the page for the tag_list actions
+            // if empty, we keep the page in the posts list in tag page
             return false;
         }
         else
@@ -120,7 +120,7 @@ class Picotags {
             $tag_list = array();
             // Loop through the pages
             foreach ($pages as $page) {
-                // If the page has tags and if the page is not in the exclude meta list
+                // If the page has tags and if the page has not meta in the exclude meta list
                 if ($page['tags'] and $this->exclude_from_tag_list($page) == false) {
                     if (!is_array($page['tags'])) {
                         $page['tags'] = explode(',', $page['tags']);
