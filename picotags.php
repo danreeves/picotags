@@ -14,6 +14,33 @@ class Picotags {
     public $is_tag;
     public $current_tag;
 
+    /* 
+        Declaring two functions for sorting tags with special chars
+        Thanks to Olivier Laviale (https://github.com/olvlvl)
+        http://www.weirdog.com/blog/php/trier-les-cles-accentuees-dun-tableau-associatif.html
+    */
+    private function wd_remove_accents($str, $charset='utf-8')
+    {
+        $str = htmlentities($str, ENT_NOQUOTES, $charset);
+        
+        $str = preg_replace('#&([A-za-z])(?:acute|cedil|caron|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $str);
+        $str = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $str); // pour les ligatures e.g. '&oelig;'
+        $str = preg_replace('#&[^;]+;#', '', $str); // supprime les autres caractères
+        
+        return $str;
+    }
+    private function wd_unaccent_compare_ci($a, $b)
+    {
+        return strcmp(strtolower($this->wd_remove_accents($a)), strtolower($this->wd_remove_accents($b)));
+    }
+
+    public function tags_sorting(&$array)
+    {
+        $array = array_flip($array);
+        uksort($array, 'Picotags::wd_unaccent_compare_ci');
+        $array = array_flip($array);
+    }
+
     public function config_loaded(&$settings) {
 
         if (isset($settings['ptags_nbcol']))
@@ -68,7 +95,7 @@ class Picotags {
             /* Sort alphabetically the tags for articles/blog posts */
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
-                natcasesort($meta['tags']);
+                $this->tags_sorting($meta['tags']);
             }
         }
     }
@@ -81,11 +108,12 @@ class Picotags {
             $data['tags'] = explode(',', $page_meta['tags']);
             /* 
                 Sort alphabetically the tags for tag pages
-                (works on my local WampServer2.5)
+                (works on my local WampServer2.5 and LAMP)
+                for localhost ?
             */
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
-                natcasesort($data['tags']);
+                $this->tags_sorting($data['tags']);
             }
         }
     }
@@ -130,7 +158,7 @@ class Picotags {
                         */
                         if (isset($this->ptags_sort) and $this->ptags_sort === true)
                         {
-                            natcasesort($page['tags']);
+                            $this->tags_sorting($page['tags']);
                         }
                     }
                     // Loop through the tags
@@ -170,7 +198,7 @@ class Picotags {
                 $tag_list_sorted = array();
                 $tag_list_sorted = $tag_list;
                 $tag_list = array();
-                natcasesort($tag_list_sorted);
+                $this->tags_sorting($tag_list_sorted);
                 foreach ($tag_list_sorted as $key => $value) {
                     $tag_list[] = $value;
                 }
