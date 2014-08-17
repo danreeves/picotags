@@ -51,7 +51,7 @@ class Picotags {
         // Set is_tag to true if the first four characters of the URL are 'tag/'
         $this->is_tag = (substr($url, 0, 4) === 'tag/');
         // If the URL does start with 'tag/', grab the rest of the URL
-        if ($this->is_tag) $this->current_tag = substr($url, 4);
+        if ($this->is_tag) $this->current_tag = urldecode(substr($url, 4));
     }
 
     public function before_read_file_meta(&$headers)
