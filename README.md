@@ -135,3 +135,19 @@ In your config.php :
 ```
 $config['ptags_delunique'] = true;
 ```
+
+## Excluding pages from the tags list
+
+In your config.php, you can use the setting `ptags_exclude` and specify the pages you want to exclude from the tag_list through an array in which you can associate multiple values for a meta type :
+```
+$config['ptags_exclude'] = array(
+    'template' => 'category',
+    'title' => 'GCweb, qu\'est-ce que c\'est ?|CV',
+    'category' => 'Maîtrise Sciences du langage|Master recherche Sciences du langage|Master professionnel Édition'
+);
+```
+
+__WARNING__
+- you have to use the `pipe (|)` as a separator;
+- you have to escape single quotes with a backslash;
+- be careful, in some case you can obtain 404 error when there is no articles to display in a tag page.
