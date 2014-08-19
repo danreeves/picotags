@@ -92,7 +92,7 @@ class Picotags {
         // Parses meta.tags to ensure it is an array
         if (isset($meta['tags']) && !is_array($meta['tags']) && $meta['tags'] !== '') {
             $meta['tags'] = explode(',', $meta['tags']);
-            /* Sort alphabetically the tags for articles/blog posts */
+            // Sort alphabetically the tags for articles/blog posts 
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
                 $this->tags_sorting($meta['tags']);
@@ -106,11 +106,11 @@ class Picotags {
         if ($page_meta['tags'] != '') {
             // Add tags to page in pages
             $data['tags'] = explode(',', $page_meta['tags']);
-            /* 
-                Sort alphabetically the tags for tag pages
-                (works on my local WampServer2.5 and LAMP)
-                for localhost ?
-            */
+         
+            // Sort alphabetically the tags for tag pages
+            // (works on my local WampServer2.5 and LAMP)
+            // for localhost ?
+        
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
                 $this->tags_sorting($data['tags']);
@@ -152,10 +152,10 @@ class Picotags {
                 if ($page['tags'] and $this->exclude_from_tag_list($page) == false) {
                     if (!is_array($page['tags'])) {
                         $page['tags'] = explode(',', $page['tags']);
-                        /* 
-                            Sort alphabetically the tags for tag pages
-                            (works on my OVH server)
-                        */
+                     
+                        // Sort alphabetically the tags for tag pages
+                        // (works on my OVH server)
+                    
                         if (isset($this->ptags_sort) and $this->ptags_sort === true)
                         {
                             $this->tags_sorting($page['tags']);
@@ -173,10 +173,10 @@ class Picotags {
                     }
                 }
             }
-            /* 
-                Removing from the tags list the tags with only one reference
-                Change the value to $config['ptags_delunique'] = true; in the config.php
-            */
+         
+            // Removing from the tags list the tags with only one reference
+            // Change the value to $config['ptags_delunique'] = true; in the config.php
+        
             if (isset($this->ptags_delunique) and $this->ptags_delunique === true)
             {
                 foreach(array_count_values($tag_list) as $val => $occ)
@@ -188,10 +188,10 @@ class Picotags {
                     }
                 }
             }
-            /* 
-                Sort alphabetically, case insensitive
-                Change the value to $config['ptags_sort'] = true; in the config.php
-            */
+         
+            // Sort alphabetically, case insensitive
+            // Change the value to $config['ptags_sort'] = true; in the config.php
+        
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
                 
@@ -259,7 +259,7 @@ class Picotags {
                 }
             }
             else {
-                $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
+                $twig_vars['tag_list'] = $this->tag_list; // {{ tag_list }} in an array
             } 
         }
     }
