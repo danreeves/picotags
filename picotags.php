@@ -14,6 +14,33 @@ class Picotags {
     public $is_tag;
     public $current_tag;
 
+    /* 
+        Declaring two functions for sorting tags with special chars
+        Thanks to Olivier Laviale (https://github.com/olvlvl)
+        http://www.weirdog.com/blog/php/trier-les-cles-accentuees-dun-tableau-associatif.html
+    */
+    private function wd_remove_accents($str, $charset='utf-8')
+    {
+        $str = htmlentities($str, ENT_NOQUOTES, $charset);
+        
+        $str = preg_replace('#&([A-za-z])(?:acute|cedil|caron|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $str);
+        $str = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $str); // pour les ligatures e.g. '&oelig;'
+        $str = preg_replace('#&[^;]+;#', '', $str); // supprime les autres caractères
+        
+        return $str;
+    }
+    private function wd_unaccent_compare_ci($a, $b)
+    {
+        return strcmp(strtolower($this->wd_remove_accents($a)), strtolower($this->wd_remove_accents($b)));
+    }
+
+    public function tags_sorting(&$array)
+    {
+        $array = array_flip($array);
+        uksort($array, 'Picotags::wd_unaccent_compare_ci');
+        $array = array_flip($array);
+    }
+
     public function config_loaded(&$settings) {
 
         if (isset($settings['ptags_nbcol']))
@@ -28,6 +55,22 @@ class Picotags {
         {
             $this->ptags_delunique = $settings['ptags_delunique'];
         }
+        if (isset($settings['ptags_exclude']))
+        {
+            $this->ptags_exclude = $settings['ptags_exclude'];
+            // Creating an inverted array (value = key ie. blabla = title)
+            // for later comparison with parsed pages meta array
+            foreach ($this->ptags_exclude as $metakey => $metavalue)
+            {
+                // Keeping an array with meta keys to check in pages
+                $this->exclude_keys[] = $metakey;
+                $metavalue = explode('|', $metavalue);
+                foreach ($metavalue as $key => $value)
+                {
+                    $this->metaexclude[$value] = $metakey;
+                }
+            }
+        }
     }
 
     public function request_url(&$url)
@@ -35,7 +78,7 @@ class Picotags {
         // Set is_tag to true if the first four characters of the URL are 'tag/'
         $this->is_tag = (substr($url, 0, 4) === 'tag/');
         // If the URL does start with 'tag/', grab the rest of the URL
-        if ($this->is_tag) $this->current_tag = substr($url, 4);
+        if ($this->is_tag) $this->current_tag = urldecode(substr($url, 4));
     }
 
     public function before_read_file_meta(&$headers)
@@ -49,10 +92,10 @@ class Picotags {
         // Parses meta.tags to ensure it is an array
         if (isset($meta['tags']) && !is_array($meta['tags']) && $meta['tags'] !== '') {
             $meta['tags'] = explode(',', $meta['tags']);
-            /* Sort alphabetically the tags for articles/blog posts */
+            // Sort alphabetically the tags for articles/blog posts 
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
-                natcasesort($meta['tags']);
+                $this->tags_sorting($meta['tags']);
             }
         }
     }
@@ -63,14 +106,36 @@ class Picotags {
         if ($page_meta['tags'] != '') {
             // Add tags to page in pages
             $data['tags'] = explode(',', $page_meta['tags']);
-            /* 
-                Sort alphabetically the tags for tag pages
-                (works on my local WampServer2.5)
-            */
+         
+            // Sort alphabetically the tags for tag pages
+            // (works on my local WampServer2.5 and LAMP)
+            // for localhost ?
+        
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
-                natcasesort($data['tags']);
+                $this->tags_sorting($data['tags']);
             }
+        }
+    }
+
+    public function exclude_from_tag_list(&$lapage)
+    {
+        $lapagemeta = array();
+        // For every meta key (title, template...) of the ptags_exclude
+        // get the value for the parsed page
+        foreach ($this->exclude_keys as $key => $value) {
+            $lapagemeta[$value] = $lapage[$value];
+        }
+        // Flipping array to compare with the excluded meta values
+        $lapagemeta = array_flip(array_filter($lapagemeta));
+        $this->diff = array_filter(array_intersect_assoc($lapagemeta, $this->metaexclude));
+        if (empty($this->diff)) {
+            // if empty, we keep the page in the posts list in tag page
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 
@@ -83,17 +148,17 @@ class Picotags {
             $tag_list = array();
             // Loop through the pages
             foreach ($pages as $page) {
-                // If the page has tags
-                if ($page['tags'] and $page['template'] != 'category') {
+                // If the page has tags and if the page has not meta in the exclude meta list
+                if ($page['tags'] and $this->exclude_from_tag_list($page) == false) {
                     if (!is_array($page['tags'])) {
                         $page['tags'] = explode(',', $page['tags']);
-                        /* 
-                            Sort alphabetically the tags for tag pages
-                            (works on my OVH server)
-                        */
+                     
+                        // Sort alphabetically the tags for tag pages
+                        // (works on my OVH server)
+                    
                         if (isset($this->ptags_sort) and $this->ptags_sort === true)
                         {
-                            natcasesort($page['tags']);
+                            $this->tags_sorting($page['tags']);
                         }
                     }
                     // Loop through the tags
@@ -108,10 +173,10 @@ class Picotags {
                     }
                 }
             }
-            /* 
-                Removing from the tags list the tags with only one reference
-                Change the value to $config['ptags_delunique'] = true; in the config.php
-            */
+         
+            // Removing from the tags list the tags with only one reference
+            // Change the value to $config['ptags_delunique'] = true; in the config.php
+        
             if (isset($this->ptags_delunique) and $this->ptags_delunique === true)
             {
                 foreach(array_count_values($tag_list) as $val => $occ)
@@ -123,17 +188,17 @@ class Picotags {
                     }
                 }
             }
-            /* 
-                Sort alphabetically, case insensitive
-                Change the value to $config['ptags_sort'] = true; in the config.php
-            */
+         
+            // Sort alphabetically, case insensitive
+            // Change the value to $config['ptags_sort'] = true; in the config.php
+        
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
                 
                 $tag_list_sorted = array();
                 $tag_list_sorted = $tag_list;
                 $tag_list = array();
-                natcasesort($tag_list_sorted);
+                $this->tags_sorting($tag_list_sorted);
                 foreach ($tag_list_sorted as $key => $value) {
                     $tag_list[] = $value;
                 }
@@ -194,7 +259,7 @@ class Picotags {
                 }
             }
             else {
-                $twig_vars['tag_list'] = $this->tag_list; /* {{ tag_list }} in an array*/
+                $twig_vars['tag_list'] = $this->tag_list; // {{ tag_list }} in an array
             } 
         }
     }

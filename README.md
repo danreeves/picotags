@@ -96,6 +96,71 @@ You can now access both the current page `meta.tags` and each `page.tags` in the
 <!-- single page -->
 {% endif %}
 ```
+
+If you encounter any trouble with this template structure, you might want to try this one:
+```
+{% if is_front_page %}
+
+    FRONT PAGE
+
+{% elseif current_page is not empty %}
+
+    {% if meta.tags is not empty %}
+
+        <!-- BLOG POSTS WITH TAGS -->
+        <article>
+            <h2>{{ meta.title }}</h2>
+            <p class="meta">Tags:
+                {% for tag in meta.tags %}
+                    <a href="{{ base_url }}/tag/{{ tag }}">#{{ tag }}</a>
+                {% endfor %}
+            </p>
+            {{ content }}
+        </article>
+
+    {% else %}
+
+        <!-- BLOG POSTS WITHOUT TAGS -->
+        <article>
+            <h2>{{ meta.title }}</h2>
+            {{ content }}
+        </article>
+
+    {% endif %}
+
+{% elseif current_page is empty %}
+
+    {% if meta.title != 'Error 404' %}
+
+        <!-- TAG PAGES : list of blog posts tagged with #... -->
+
+        All tags:
+        <ul class="tags">
+            {% for tag in tag_list %}
+            <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+            {% endfor %}
+        </ul>
+        <p>Posts tagged <a href="{{ page.url }}">#{{ current_tag }}</a>:</p>
+        {% for page in pages %}
+            {% if page.date %}
+                <article>
+                    <h2><a href="{{ page.url }}">{{ page.title }}</a></h2>
+                    <p class="meta">Posted on {{ page.date_formatted }} by {{ page.author }}
+                        <span class="tags"><br />Tags:
+                            {% for tag in page.tags %}
+                                    <a href="{{ base_url }}/tag/{{ tag }}">#{{ tag }}</a>
+                            {% endfor %}
+                        </span>
+                    </p>
+                    {{ page.content }}
+                </article>
+            {% endif %}
+        {% endfor %}
+
+    {% endif %}
+{% endif %}
+```
+
 ## Alphabetically sorted list
 
 In your config.php :
@@ -135,3 +200,19 @@ In your config.php :
 ```
 $config['ptags_delunique'] = true;
 ```
+
+## Excluding pages from the tags list
+
+In your config.php, you can use the setting `ptags_exclude` and specify the pages you want to exclude from the tag_list through an array in which you can associate multiple values for a meta type :
+```
+$config['ptags_exclude'] = array(
+    'template' => 'category',
+    'title' => 'GCweb, qu\'est-ce que c\'est ?|CV',
+    'category' => 'Maîtrise Sciences du langage|Master recherche Sciences du langage|Master professionnel Édition'
+);
+```
+
+__WARNING__
+- you have to use the `pipe (|)` as a separator;
+- you have to escape single quotes with a backslash;
+- be careful, in some case you can obtain 404 error when there is no articles to display in a tag page.
