@@ -96,6 +96,71 @@ You can now access both the current page `meta.tags` and each `page.tags` in the
 <!-- single page -->
 {% endif %}
 ```
+
+If you encounter any trouble with this template structure, you might want to try this one:
+```
+{% if is_front_page %}
+
+    FRONT PAGE
+
+{% elseif current_page is not empty %}
+
+    {% if meta.tags is not empty %}
+
+        <!-- BLOG POSTS WITH TAGS -->
+        <article>
+            <h2>{{ meta.title }}</h2>
+            <p class="meta">Tags:
+                {% for tag in meta.tags %}
+                    <a href="{{ base_url }}/tag/{{ tag }}">#{{ tag }}</a>
+                {% endfor %}
+            </p>
+            {{ content }}
+        </article>
+
+    {% else %}
+
+        <!-- BLOG POSTS WITHOUT TAGS -->
+        <article>
+            <h2>{{ meta.title }}</h2>
+            {{ content }}
+        </article>
+
+    {% endif %}
+
+{% elseif current_page is empty %}
+
+    {% if meta.title != 'Error 404' %}
+
+        <!-- TAG PAGES : list of blog posts tagged with #... -->
+
+        All tags:
+        <ul class="tags">
+            {% for tag in tag_list %}
+            <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+            {% endfor %}
+        </ul>
+        <p>Posts tagged <a href="{{ page.url }}">#{{ current_tag }}</a>:</p>
+        {% for page in pages %}
+            {% if page.date %}
+                <article>
+                    <h2><a href="{{ page.url }}">{{ page.title }}</a></h2>
+                    <p class="meta">Posted on {{ page.date_formatted }} by {{ page.author }}
+                        <span class="tags"><br />Tags:
+                            {% for tag in page.tags %}
+                                    <a href="{{ base_url }}/tag/{{ tag }}">#{{ tag }}</a>
+                            {% endfor %}
+                        </span>
+                    </p>
+                    {{ page.content }}
+                </article>
+            {% endif %}
+        {% endfor %}
+
+    {% endif %}
+{% endif %}
+```
+
 ## Alphabetically sorted list
 
 In your config.php :
