@@ -256,7 +256,7 @@ class Picotags {
                     {% endfor %}
                 </ul>
             */
-            if (isset($this->ptags_nbcol)) {
+            if (isset($this->ptags_nbcol) && $this->ptags_nbcol != '') {
                 $nbtags = sizeof($this->tag_list);
                 $nbtagscol = ceil ($nbtags/$this->ptags_nbcol);
                 $tag_list_cut = array();
