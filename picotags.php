@@ -266,6 +266,8 @@ class Picotags {
                     $this->tag_list_cut = array_slice($this->tag_list, $i*$nbtagscol, $nbtagscol);
                     $twig_vars['tag_list_'.$i] = $this->tag_list_cut;
                 }
+                // Keeping the original tag_list twig var
+                $twig_vars['tag_list'] = $this->tag_list;
             }
             else {
                 $twig_vars['tag_list'] = $this->tag_list; // {{ tag_list }} in an array
