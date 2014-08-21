@@ -55,6 +55,10 @@ class Picotags {
         {
             $this->ptags_delunique = $settings['ptags_delunique'];
         }
+        if (isset($settings['ptags_template']))
+        {
+            $this->ptags_template = $settings['ptags_template'];
+        }
         if (isset($settings['ptags_exclude']))
         {
             $this->ptags_exclude = $settings['ptags_exclude'];
@@ -223,11 +227,16 @@ class Picotags {
         }
     }
 
-    public function before_render(&$twig_vars, &$twig)
+    public function before_render(&$twig_vars, &$twig, &$template)
     {
         if ($this->is_tag) {
             // Override 404 header
             header($_SERVER['SERVER_PROTOCOL'].' 200 OK');
+            // Set template if defined in config.php
+            if (isset($this->ptags_template) && $this->ptags_template != '')
+            {
+                $template = $this->ptags_template;
+            }
             // Set page title to #TAG
             $twig_vars['meta']['title'] = "#" . $this->current_tag;
             // Return current tag and list of all tags as Twig vars
