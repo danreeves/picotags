@@ -55,6 +55,10 @@ class Picotags {
         {
             $this->ptags_delunique = $settings['ptags_delunique'];
         }
+        if (isset($settings['ptags_template']))
+        {
+            $this->ptags_template = $settings['ptags_template'];
+        }
         if (isset($settings['ptags_exclude']))
         {
             $this->ptags_exclude = $settings['ptags_exclude'];
@@ -223,11 +227,16 @@ class Picotags {
         }
     }
 
-    public function before_render(&$twig_vars, &$twig)
+    public function before_render(&$twig_vars, &$twig, &$template)
     {
         if ($this->is_tag) {
             // Override 404 header
             header($_SERVER['SERVER_PROTOCOL'].' 200 OK');
+            // Set template if defined in config.php
+            if (isset($this->ptags_template) && $this->ptags_template != '')
+            {
+                $template = $this->ptags_template;
+            }
             // Set page title to #TAG
             $twig_vars['meta']['title'] = "#" . $this->current_tag;
             // Return current tag and list of all tags as Twig vars
@@ -247,7 +256,7 @@ class Picotags {
                     {% endfor %}
                 </ul>
             */
-            if (isset($this->ptags_nbcol)) {
+            if (isset($this->ptags_nbcol) && $this->ptags_nbcol != '') {
                 $nbtags = sizeof($this->tag_list);
                 $nbtagscol = ceil ($nbtags/$this->ptags_nbcol);
                 $tag_list_cut = array();
@@ -257,6 +266,8 @@ class Picotags {
                     $this->tag_list_cut = array_slice($this->tag_list, $i*$nbtagscol, $nbtagscol);
                     $twig_vars['tag_list_'.$i] = $this->tag_list_cut;
                 }
+                // Keeping the original tag_list twig var
+                $twig_vars['tag_list'] = $this->tag_list;
             }
             else {
                 $twig_vars['tag_list'] = $this->tag_list; // {{ tag_list }} in an array

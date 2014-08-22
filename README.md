@@ -161,6 +161,38 @@ If you encounter any trouble with this template structure, you might want to try
 {% endif %}
 ```
 
+### Personal template for tag pages
+
+You can choose to use a personal template for tag pages instead of using conditions in your theme `index.html`.
+
+First, you have to add a setting to your `config.php`:
+```
+$config['ptags_template'] = 'YOUR_TAG_TEMPLATE';
+```
+Then, you have to create a "YOUR_TAG_TEMPLATE.html" file inside your theme folder ; in this template page, you can simply add in the \<body\> section something like that:
+```
+<h1>Posts tagged <a href="{{ page.url }}">#{{ current_tag }}</a></h1>
+{% for page in pages %}          
+    <article>
+        <h2><a href="{{ page.url }}">{{ page.title }}</a></h2>
+        <p class="meta">
+            <span class="tags"><br />Tags :
+                {% for tag in page.tags %}
+                    <a href="{{ base_url }}/tag/{{ tag }}">#{{ tag }}</a>
+                {% endfor %}
+            </span>
+        </p>
+        {{ page.excerpt }}
+    </article>
+{% endfor %}
+<h1>All tags :</h1>
+    <ul>
+        {% for tag in tag_list %}
+            <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
+        {% endfor %}
+    </ul>
+```
+
 ## Alphabetically sorted list
 
 In your config.php :
