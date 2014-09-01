@@ -127,20 +127,24 @@ class Picotags {
         $lapagemeta = array();
         // For every meta key (title, template...) of the ptags_exclude
         // get the value for the parsed page
-        foreach ($this->exclude_keys as $key => $value) {
-            $lapagemeta[$value] = $lapage[$value];
-        }
-        // Flipping array to compare with the excluded meta values
-        $lapagemeta = array_flip(array_filter($lapagemeta));
-        $this->diff = array_filter(array_intersect_assoc($lapagemeta, $this->metaexclude));
-        if (empty($this->diff)) {
-            // if empty, we keep the page in the posts list in tag page
-            return false;
+        if (isset($this->exclude_keys) && !empty($this->exclude_keys)) {
+            foreach ($this->exclude_keys as $key => $value) {
+                $lapagemeta[$value] = $lapage[$value];
+            }
+            // Flipping array to compare with the excluded meta values
+            $lapagemeta = array_flip(array_filter($lapagemeta));
+            $this->diff = array_filter(array_intersect_assoc($lapagemeta, $this->metaexclude));
+            if (empty($this->diff)) {
+                // if empty, we keep the page in the posts list in tag page
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         else
-        {
-            return true;
-        }
+            return false;
     }
 
     public function get_pages(&$pages, &$current_page, &$prev_page, &$next_page)
