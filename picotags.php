@@ -150,7 +150,7 @@ class Picotags {
     public function get_pages(&$pages, &$current_page, &$prev_page, &$next_page)
     {
         // If the URL starts with 'tag/' do this different logic
-        // if ($this->is_tag === true) {
+        if ($this->is_tag === true) {
             // Init $new_pages and $tag_list arrays
             $new_pages = array();
             $tag_list = array();
@@ -219,21 +219,27 @@ class Picotags {
             }
             // Overwrite $pages with $new_pages
             $pages = $new_pages;
-        // } else { // Workaround
-            // $new_pages = array();
-            // foreach ($pages as $page) {
-            //     if (!is_array($page['tags'])) {
-            //         $page['tags'] = explode(',', $page['tags']);
-            //     }
-            //     $new_pages[] = $page;
-            // }
-            // $pages = $new_pages;
-        // }
+        } else { // Workaround
+            $new_pages = array();
+            foreach ($pages as $page) {
+                if (!is_array($page['tags'])) {
+                    $page['tags'] = explode(',', $page['tags']);
+                }
+                // Loop through the tags
+                foreach ($page['tags'] as $tag) {
+                    // And add them to the tag_list array
+                    $tag_list[] = $tag;
+                }
+                $new_pages[] = $page;
+            }
+            $pages = $new_pages;
+            $this->tag_list = array_unique(array_filter($tag_list));
+        }
     }
 
     public function before_render(&$twig_vars, &$twig, &$template)
     {
-        // if ($this->is_tag) {
+        if ($this->is_tag) {
             // Override 404 header
             header($_SERVER['SERVER_PROTOCOL'].' 200 OK');
             // Set template if defined in config.php
@@ -244,6 +250,7 @@ class Picotags {
             // Set page title to #TAG
             $twig_vars['meta']['title'] = "#" . $this->current_tag;
             // Return current tag and list of all tags as Twig vars
+        }
             $twig_vars['current_tag'] = $this->current_tag; /* {{ current_tag }} is a string*/
             /*
                 MULTICOLUMNS OUTPUT
@@ -273,10 +280,9 @@ class Picotags {
                 // Keeping the original tag_list twig var
                 $twig_vars['tag_list'] = $this->tag_list;
             }
-            else {
+            // else {
                 $twig_vars['tag_list'] = $this->tag_list; // {{ tag_list }} in an array
-            }
-        // }
+            // }
     }
 }
 ?>
