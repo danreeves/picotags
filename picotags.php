@@ -14,7 +14,7 @@ class Picotags {
     public $is_tag;
     public $current_tag;
 
-    /* 
+    /*
         Declaring two functions for sorting tags with special chars
         Thanks to Olivier Laviale (https://github.com/olvlvl)
         http://www.weirdog.com/blog/php/trier-les-cles-accentuees-dun-tableau-associatif.html
@@ -22,11 +22,11 @@ class Picotags {
     private function wd_remove_accents($str, $charset='utf-8')
     {
         $str = htmlentities($str, ENT_NOQUOTES, $charset);
-        
+
         $str = preg_replace('#&([A-za-z])(?:acute|cedil|caron|circ|grave|orn|ring|slash|th|tilde|uml);#', '\1', $str);
         $str = preg_replace('#&([A-za-z]{2})(?:lig);#', '\1', $str); // pour les ligatures e.g. '&oelig;'
         $str = preg_replace('#&[^;]+;#', '', $str); // supprime les autres caractères
-        
+
         return $str;
     }
     private function wd_unaccent_compare_ci($a, $b)
@@ -96,7 +96,7 @@ class Picotags {
         // Parses meta.tags to ensure it is an array
         if (isset($meta['tags']) && !is_array($meta['tags']) && $meta['tags'] !== '') {
             $meta['tags'] = explode(',', $meta['tags']);
-            // Sort alphabetically the tags for articles/blog posts 
+            // Sort alphabetically the tags for articles/blog posts
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
                 $this->tags_sorting($meta['tags']);
@@ -110,11 +110,11 @@ class Picotags {
         if ($page_meta['tags'] != '') {
             // Add tags to page in pages
             $data['tags'] = explode(',', $page_meta['tags']);
-         
+
             // Sort alphabetically the tags for tag pages
             // (works on my local WampServer2.5 and LAMP)
             // for localhost ?
-        
+
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
                 $this->tags_sorting($data['tags']);
@@ -150,7 +150,7 @@ class Picotags {
     public function get_pages(&$pages, &$current_page, &$prev_page, &$next_page)
     {
         // If the URL starts with 'tag/' do this different logic
-        if ($this->is_tag === true) {
+        // if ($this->is_tag === true) {
             // Init $new_pages and $tag_list arrays
             $new_pages = array();
             $tag_list = array();
@@ -160,10 +160,10 @@ class Picotags {
                 if ($page['tags'] and $this->exclude_from_tag_list($page) == false) {
                     if (!is_array($page['tags'])) {
                         $page['tags'] = explode(',', $page['tags']);
-                     
+
                         // Sort alphabetically the tags for tag pages
                         // (works on my OVH server)
-                    
+
                         if (isset($this->ptags_sort) and $this->ptags_sort === true)
                         {
                             $this->tags_sorting($page['tags']);
@@ -181,10 +181,10 @@ class Picotags {
                     }
                 }
             }
-         
+
             // Removing from the tags list the tags with only one reference
             // Change the value to $config['ptags_delunique'] = true; in the config.php
-        
+
             if (isset($this->ptags_delunique) and $this->ptags_delunique === true)
             {
                 foreach(array_count_values($tag_list) as $val => $occ)
@@ -196,13 +196,13 @@ class Picotags {
                     }
                 }
             }
-         
+
             // Sort alphabetically, case insensitive
             // Change the value to $config['ptags_sort'] = true; in the config.php
-        
+
             if (isset($this->ptags_sort) and $this->ptags_sort === true)
             {
-                
+
                 $tag_list_sorted = array();
                 $tag_list_sorted = $tag_list;
                 $tag_list = array();
@@ -219,21 +219,21 @@ class Picotags {
             }
             // Overwrite $pages with $new_pages
             $pages = $new_pages;
-        } else { // Workaround
-            $new_pages = array();
-            foreach ($pages as $page) {
-                if (!is_array($page['tags'])) {
-                    $page['tags'] = explode(',', $page['tags']);
-                }
-                $new_pages[] = $page;
-            }
-            $pages = $new_pages;
-        }
+        // } else { // Workaround
+            // $new_pages = array();
+            // foreach ($pages as $page) {
+            //     if (!is_array($page['tags'])) {
+            //         $page['tags'] = explode(',', $page['tags']);
+            //     }
+            //     $new_pages[] = $page;
+            // }
+            // $pages = $new_pages;
+        // }
     }
 
     public function before_render(&$twig_vars, &$twig, &$template)
     {
-        if ($this->is_tag) {
+        // if ($this->is_tag) {
             // Override 404 header
             header($_SERVER['SERVER_PROTOCOL'].' 200 OK');
             // Set template if defined in config.php
@@ -245,10 +245,10 @@ class Picotags {
             $twig_vars['meta']['title'] = "#" . $this->current_tag;
             // Return current tag and list of all tags as Twig vars
             $twig_vars['current_tag'] = $this->current_tag; /* {{ current_tag }} is a string*/
-            /* 
+            /*
                 MULTICOLUMNS OUTPUT
                 Change the value of $config['ptags_nbcol'] = 5; in the config.php
-                In your template, for a two columns output : 
+                In your template, for a two columns output :
                 <ul>
                     {% for tag in tag_list_0 %}
                         <li><a href="/tag/{{ tag }}">#{{ tag }}</a></li>
@@ -275,8 +275,8 @@ class Picotags {
             }
             else {
                 $twig_vars['tag_list'] = $this->tag_list; // {{ tag_list }} in an array
-            } 
-        }
+            }
+        // }
     }
 }
 ?>
