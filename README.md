@@ -8,8 +8,8 @@ and leaves the Pico core alone.
 It gives you access to:
 * The current page `meta.tags` array
 * Each `page.tags` in the `pages` array
+* The `tag_list` array of all used tags
 * If on a `/tag/` URL, the `current_tag` variable
-* If on a `/tag/` URL, the `tag_list` array of all used tags
 
 ##Installation
 
