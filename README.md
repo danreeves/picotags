@@ -31,7 +31,7 @@ Tags: js,javascript,php
 */
 ```
 
-You can now access both the current page `meta.tags` and each `page.tags` in the `pages` array:
+You can now access both the current page `meta.tags` and each `page.tags` in the `pagetags` array:
 ```html
 {% if is_front_page %}
 <!-- front page -->
@@ -71,7 +71,7 @@ You can now access both the current page `meta.tags` and each `page.tags` in the
         {% endfor %}
     </ul>
     <p>Posts tagged <a href="{{ page.url }}">#{{ current_tag }}</a>:</p>
-    {% for page in pages %}
+    {% for page in pagetags %}
         {% if page.date %}
             <article>
                 <h2><a href="{{ page.url }}">{{ page.title }}</a></h2>
@@ -141,7 +141,7 @@ If you encounter any trouble with this template structure, you might want to try
             {% endfor %}
         </ul>
         <p>Posts tagged <a href="{{ page.url }}">#{{ current_tag }}</a>:</p>
-        {% for page in pages %}
+        {% for page in pagetags %}
             {% if page.date %}
                 <article>
                     <h2><a href="{{ page.url }}">{{ page.title }}</a></h2>
@@ -172,7 +172,7 @@ $config['ptags_template'] = 'YOUR_TAG_TEMPLATE';
 Then, you have to create a "YOUR_TAG_TEMPLATE.html" file inside your theme folder ; in this template page, you can simply add in the \<body\> section something like that:
 ```
 <h1>Posts tagged <a href="{{ page.url }}">#{{ current_tag }}</a></h1>
-{% for page in pages %}          
+{% for page in pagetags %}          
     <article>
         <h2><a href="{{ page.url }}">{{ page.title }}</a></h2>
         <p class="meta">
