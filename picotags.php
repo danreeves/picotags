@@ -222,8 +222,10 @@ class Picotags {
         } else { // Workaround
             $new_pages = array();
             foreach ($pages as $page) {
-                if (!is_array($page['tags'])) {
+                if (!is_array($page['tags']) && strlen($page['tags']) !== 0) {
                     $page['tags'] = explode(',', $page['tags']);
+                } else {
+                    $page['tags'] = array();
                 }
                 // Loop through the tags
                 foreach ($page['tags'] as $tag) {
