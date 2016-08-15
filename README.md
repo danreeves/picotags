@@ -1,3 +1,8 @@
+> #Deprecation notice
+This plugin is no longer maintained and may not work with Pico 1.0.
+
+>You should try this plugin: [Pico-Tags](https://github.com/PontusHorn/Pico-Tags)
+
 picotags
 ========
 
